@@ -76,7 +76,11 @@ data_filled = data[data["Demographics_Total"] > 0]
 st.markdown("""---""")
 st.subheader("College Graduates Education Analysis")
 
-st.write("""Our education data analysis delves deeper into...""")
+st.write("""Our education data analysis delves deeper into the demographics of the student population and the degrees 
+they have earned. The below bar chart has a dynamic Y axis that the user can modify to observe how user selected feature
+changes across all College Majors for the selected year. The Demo graphics available in the dta include Student Ethnicity
+and Gender. We also plot the salary distribution students earned after graduation using the mena and standard deviation 
+provided in our dataset.""")
 
 dict_options = {"Total College Graduates": "Demographics_Total",
                 "Average Salary": "Salaries_Mean",
@@ -115,7 +119,7 @@ hist_main = alt.Chart(hist_data).mark_bar(tooltip=True).encode(
     alt.Color("Education_Major", legend=None),
     opacity=alt.condition(brush, alt.OpacityValue(1), alt.OpacityValue(0.4))
 ).add_selection(brush).properties(
-    width=800,
+    width=600,
     height=300
 )
 
@@ -133,20 +137,48 @@ with st.spinner(text="Loading data..."):
         binSpacing=0,
         tooltip=True
     ).encode(
-        alt.X('Measurement:Q', bin=alt.Bin(maxbins=50), title ="Salary after graduation"),
+        alt.X('Measurement:Q', bin=alt.Bin(maxbins=50), title="Salary after graduation"),
         alt.Y('count()', stack=None, axis=None),
         alt.Color('Education_Major:N'),
         opacity=alt.condition(brush, alt.value(1), alt.value(0.01)),
         tooltip=['Education_Major:N']
-    ).add_selection(
-        brush
     ).properties(
         height=300,
-        width=800,
+        width=600,
         title='Salary Distribution for Majors (Normalized)'
     )
 
     st.write(hist_main | salary_chart)
+
+st.write("""Lets us analyze College major preferences by gender. Do males have different education major preferences 
+ than females in the year selected above ?""")
+
+# Gender Plot
+middle = alt.Chart(hist_data).encode(
+    y=alt.Y('Education_Major', axis=None),
+    text=alt.Text('Education_Major'),
+).mark_text().properties(width=100)
+
+female = alt.Chart(hist_data).encode(
+    alt.X("Demographics_Gender_Females", sort=alt.SortOrder('descending'), title="Females"),
+    alt.Y("Education_Major:N", axis=None),
+    tooltip=['Education_Major', 'Year', 'Demographics_Gender_Females']
+).add_selection(brush).properties(title='Female', width=550)
+
+male = alt.Chart(hist_data).encode(
+    alt.X("Demographics_Gender_Males", title="Males"),
+    alt.Y("Education_Major:N", axis=None),
+    tooltip=['Education_Major', 'Year', 'Demographics_Gender_Males']
+).properties(title='Male', width=550)
+
+st.write(alt.concat(
+    female.mark_bar(color='pink'),
+    middle,
+    male.mark_bar(color='lightblue'),
+    spacing=5
+).resolve_scale(
+    color='independent').configure_view(
+    stroke=None))
 
 ################################################# Employment Analysis  ##################################################
 st.markdown("""---""")
@@ -212,7 +244,7 @@ graduates_multi_line = alt.Chart(plotting_data).mark_line(tooltip=True, strokeWi
     opacity=alt.condition(line_hover | line_selector, alt.value(1), alt.value(0.3)),
     color=alt.condition(line_hover | line_selector, "Education_Major", alt.value("lightgray"))
 ).properties(
-    width=1400,
+    width=1100,
     height=400,
     title='Total Graduates by College Major per Year'
 ).add_selection(line_hover, line_selector, scales)
@@ -245,11 +277,11 @@ employment_status_names = ['Employed', 'Not in Labor Force', 'Unemployed']
 
 base = alt.Chart(plotting_data).mark_bar(tooltip=True, size=20).properties(
     height=250,
-    width=400
+    width=300
 ).interactive().transform_filter(line_selector)
 
 row1 = alt.hconcat().properties(
-    title='Employer Type'
+    title='Employer Type: Classifies employees working in Business/Industry, Educational Institutions and Government\n'
 )
 for y_encoding, label in zip(employer_type_cols, employer_type_name):
     row1 |= base.encode(y=alt.Y(y_encoding, title=label),
@@ -258,12 +290,12 @@ row1.configure_title(fontSize=50)
 
 emp_work_activity_charts = alt.vconcat()
 row2 = alt.hconcat().properties(
-    title='Working Field'
+    title='Working Field: Classifies Graduates for the year by field of work like- Accounting/Finance, Sales, etc.\n'
 )
 
 base2 = alt.Chart(plotting_data).mark_bar(tooltip=True, size=15).properties(
     height=160,
-    width=300
+    width=200
 ).interactive().transform_filter(line_selector)
 for y_encoding, label in zip(employment_work_activity[:4], employment_work_activity_names[0:4]):
     row2 |= base2.encode(y=alt.Y(y_encoding, title=label), x="Year:T", color=alt.value("#1f77b4"))
@@ -271,6 +303,23 @@ row2.configure_title(fontSize=50)
 row3 = alt.hconcat()
 for y_encoding, label in zip(employment_work_activity[4:], employment_work_activity_names[4:]):
     row3 |= base2.encode(y=alt.Y(y_encoding, title=label), x="Year:T", color=alt.value("#1f77b4"))
+
 emp_work_activity_charts = row2 & row3
 
-st.write(graduates_multi_line & row1 & emp_work_activity_charts)
+base3 = alt.Chart(plotting_data).mark_bar(tooltip=True, size=20).properties(
+    height=250,
+    width=300
+).interactive().transform_filter(line_selector)
+
+row4 = alt.hconcat().properties(
+    title='Employee Status: Classifies Graduated student as Employed, Unemployed, Not Participating in Labour Force\n'
+)
+for y_encoding, label in zip(employment_status, employment_status_names):
+    row4 |= base.encode(y=alt.Y(y_encoding, title=label),
+                        x="Year:T", color=alt.value("#2ca02c"))
+row4.configure_title(fontSize=50)
+
+st.write(graduates_multi_line & row1 & emp_work_activity_charts & row4)
+
+st.write("""The above bar graphs help us observe the trend in Employer Type, Work Field and the Employment Status of 
+graduates by Year and Major.""")
