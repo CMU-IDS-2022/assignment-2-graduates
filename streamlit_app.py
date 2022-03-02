@@ -49,6 +49,8 @@ def get_salary_dataframe(dataframe):
 # MAIN CODE
 st.set_page_config(layout="wide", page_title='College Graduates Analysis')
 st.title("Analysis of National Survey of Recent College Graduates")
+st.caption('By Sushanth Reddy and Kriti Anant')
+
 
 alt.data_transformers.disable_max_rows()
 with st.spinner(text="Loading data..."):
@@ -56,16 +58,14 @@ with st.spinner(text="Loading data..."):
 
 st.write("""
 The data being analyzed comes from the National Survey of Recent College Graduates. 
-Included is information about employment numbers, major information, and the earnings 
-of different majors. Many majors were not available before 2010, so their values have 
-been recorded as 0. On a high level the data can be subgrouped into data about Education- 
-The demographics of college graduates (ethnicity, gender, degree program, etc.) and 
-Emplopyment- Salary statistics after graduation, employer type, field of work,etc.""")
+Included is information about employment numbers, college major information, and the earnings of 
+different majors. Many majors were not available before 2010, so their values have been recorded as 0. On a high level, 
+the data can be subgrouped into data about Education- The demographics of college graduates (ethnicity, gender, degree 
+program, etc.) and Employment- Salary statistics after graduation, employer type, the field of work, etc.""")
 
 st.write("""
-Our analysis is also structured in two parts with part 1 focussing on education data
-and part 2 focusing on post graduation employment data analysis. Click the button below to
- get a gist of the raw data we are analyzing...""")
+Our analysis is also structured in two parts, with part 1 focussing on education data and part 2 focusing on after 
+graduation employment data analysis. Click the button below to get a gist of the raw data we are analyzing...""")
 
 if st.checkbox("Show Raw Data"):
     st.write(data)
@@ -77,10 +77,9 @@ st.markdown("""---""")
 st.subheader("College Graduates Education Analysis")
 
 st.write("""Our education data analysis delves deeper into the demographics of the student population and the degrees 
-they have earned. The below bar chart has a dynamic Y axis that the user can modify to observe how user selected feature
-changes across all College Majors for the selected year. The Demo graphics available in the dta include Student Ethnicity
-and Gender. We also plot the salary distribution students earned after graduation using the mena and standard deviation 
-provided in our dataset.""")
+they have earned. The below bar chart has a dynamic Y-axis that the user can modify to observe how user-selected feature
+ changes across all College Majors for the selected year. The Demographics available in the data include Student Ethnicity
+and Gender. We also plot the students' salary distribution after graduation using the given mean and standard deviation.""")
 
 dict_options = {"Total College Graduates": "Demographics_Total",
                 "Average Salary": "Salaries_Mean",
@@ -150,8 +149,8 @@ with st.spinner(text="Loading data..."):
 
     st.write(hist_main | salary_chart)
 
-st.write("""Lets us analyze College major preferences by gender. Do males have different education major preferences 
- than females in the year selected above ?""")
+st.write("""Let us analyze College major preferences by gender. Do males have different education majors than females in
+ the year selected above? I should be fairly easy to see college majors that are dominated by each gender""")
 
 # Gender Plot
 middle = alt.Chart(hist_data).encode(
@@ -186,15 +185,15 @@ st.subheader("College Graduates Employment Analysis")
 
 st.write("""With the rise in automation and robotics, humanity could leave the mundane jobs to the machines 
 and focus their time and energy on discovering novel technologies and improving their standard of life. In our analysis 
-of employment data we sought to find the majors that most graduate students were opting for, the trends in these majors 
-over the years and the employer and work type students after graduation students start working in.""")
+of employment data, we sought to find the majors that most graduate students were opting for, the trends in these majors 
+over the years, and the employer and work type students start working in after graduation.""")
 
-st.write("""Our next visualization helps us understand the temporal trend in college majors and how they fared over 
-time. You can adjust the year range to  focus on a specific time window and also compare the trend of specific majors by 
+st.write("""The following visualization helps us understand the temporal trend in college majors and how they fared over 
+time. You can adjust the year range to focus on a specific time window and compare the trend of particular majors by 
 selecting multiple college majors from our data to analyze. This chart is further linked to display trends in employer 
-type: Business, Educational Instutions and Government and also the trends in field of work- from Accounting/Finance to 
+type: Business, Educational Institutions, and Government and also the trends in the field of work- from Accounting/Finance to 
 Teaching. Clicking on a specific trend in the line chart will transform the bar charts for Employer Type and Working 
-field to display data relevant to the major""")
+field to display data relevant to the major.""")
 
 # hover select on line graph
 line_hover = alt.selection_single(on="mouseover", fields=["Education_Major"])
@@ -203,7 +202,7 @@ line_selector = alt.selection_single(fields=["Education_Major"])
 # zoom and pan
 scales = alt.selection_interval(bind='scales')
 
-cols = st.columns((2, 0.25, 1))
+cols = st.columns((2, 0.25, 1, 0.25, 1))
 with cols[0]:
     # year range slider
     year_range = st.slider('Year Range',
@@ -213,6 +212,10 @@ with cols[0]:
 with cols[2]:
     # set scale: log or linear
     chart_scale = st.radio("Select scale:", ('linear', 'log'), key='2')
+
+with cols[4]:
+    # set scale: log or linear
+    bar_chart_scaling = st.radio("Select scale for Employment Data Analysis:", ('independent', 'shared'), key='2')
 
 # multiselect majors to disply on shart
 majors_selected = st.multiselect('Select College Majors:',
@@ -282,7 +285,7 @@ base = alt.Chart(plotting_data).mark_bar(tooltip=True, size=20).properties(
 
 row1 = alt.hconcat().properties(
     title='Employer Type: Classifies employees working in Business/Industry, Educational Institutions and Government\n'
-)
+).resolve_scale(y=bar_chart_scaling)
 for y_encoding, label in zip(employer_type_cols, employer_type_name):
     row1 |= base.encode(y=alt.Y(y_encoding, title=label),
                         x="Year:T", color=alt.value("#ff7f0e"))
@@ -291,7 +294,7 @@ row1.configure_title(fontSize=50)
 emp_work_activity_charts = alt.vconcat()
 row2 = alt.hconcat().properties(
     title='Working Field: Classifies Graduates for the year by field of work like- Accounting/Finance, Sales, etc.\n'
-)
+).resolve_scale(y=bar_chart_scaling)
 
 base2 = alt.Chart(plotting_data).mark_bar(tooltip=True, size=15).properties(
     height=160,
@@ -300,7 +303,7 @@ base2 = alt.Chart(plotting_data).mark_bar(tooltip=True, size=15).properties(
 for y_encoding, label in zip(employment_work_activity[:4], employment_work_activity_names[0:4]):
     row2 |= base2.encode(y=alt.Y(y_encoding, title=label), x="Year:T", color=alt.value("#1f77b4"))
 row2.configure_title(fontSize=50)
-row3 = alt.hconcat()
+row3 = alt.hconcat().resolve_scale(y=bar_chart_scaling)
 for y_encoding, label in zip(employment_work_activity[4:], employment_work_activity_names[4:]):
     row3 |= base2.encode(y=alt.Y(y_encoding, title=label), x="Year:T", color=alt.value("#1f77b4"))
 
@@ -313,7 +316,7 @@ base3 = alt.Chart(plotting_data).mark_bar(tooltip=True, size=20).properties(
 
 row4 = alt.hconcat().properties(
     title='Employee Status: Classifies Graduated student as Employed, Unemployed, Not Participating in Labour Force\n'
-)
+).resolve_scale(y=bar_chart_scaling)
 for y_encoding, label in zip(employment_status, employment_status_names):
     row4 |= base.encode(y=alt.Y(y_encoding, title=label),
                         x="Year:T", color=alt.value("#2ca02c"))
@@ -321,5 +324,8 @@ row4.configure_title(fontSize=50)
 
 st.write(graduates_multi_line & row1 & emp_work_activity_charts & row4)
 
-st.write("""The above bar graphs help us observe the trend in Employer Type, Work Field and the Employment Status of 
-graduates by Year and Major.""")
+st.write("""The above bar graphs help us observe the trend in Employer Type, Work Field, and the Employment Status of 
+graduates by Year and Major. Using the choice to set a 'shared or 'independent' axis can help us analyze these charts 
+comparatively """)
+
+st.write("""""")
