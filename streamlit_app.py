@@ -150,7 +150,7 @@ with st.spinner(text="Loading data..."):
     st.write(hist_main | salary_chart)
 
 st.write("""Let us analyze College major preferences by gender. Do males have different education majors than females in
- the year selected above? I should be fairly easy to see college majors that are dominated by each gender""")
+ the year selected above? It should be fairly easy to see college majors that are dominated by each gender""")
 
 # Gender Plot
 middle = alt.Chart(hist_data).encode(
