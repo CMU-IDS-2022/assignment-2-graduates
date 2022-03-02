@@ -24,7 +24,7 @@ The histogram is linked with salary statistics in an adjacent area. The salary s
 
 Our next graph uses a population pyramid chart to observe variations in college major preferences by gender for a selected year. This helps us find gender-based patterns and shifts in college major preferences throughout the years.
 
-![Gender Pyramid Bar chart](gender_pyramid.png)
+![Gender Pyramid Bar chart](gender_pyramid.PNG)
 
 Since the dataset is primarily time series based, our visualizations would be incomplete without a line graph showcasing trends in college major preferences throughout the years. The multi-line graph is interactive with hover and select to focus functionality. The user can selectively analyze a subset of college majors and choose the year range to localize their analysis. This multi-line graph is linked to bar graphs that display bar charts for analyzing employment data. We primarily look at Employer Type, Employment Work field, and Employment status. The multi-line and succeeding bar charts are linked with the click to focus approach to display year-wise trends for the college major selected. The bar charts also have the feature to share a common axis scale across similar charts to make them easily comparable. In all our charts, we used tooltips to aid readability.
 
