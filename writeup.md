@@ -1,7 +1,5 @@
 # Analysis of National Survey of Recent College Graduates
 
-![A screenshot of your application. Could be a GIF.](screenshot.png)
-
 ## Project Goals
 
 The CORGIS Graduates CSV dataset is an aggregate of surveys conducted on Recent College Graduates from 1993 to 2015. The dataset contains the Year of Graduation, College Major, Student Ethnicity and Gender, After-Graduation Salary statistics, Employment and Employer data, to name a few. As graduate school students ourselves, we were very intrigued about the trends in education and employment throughout the years. We split the dataset into two components before starting our sketching and visualization analysis- Education & Student Demographics and After-Graduation Employment.   
@@ -22,15 +20,15 @@ We chose bar charts for our  Education & Student Demographics Analysis to plot t
 
 The histogram is linked with salary statistics in an adjacent area. The salary statistics are derived from the Salary Mean and Standard deviation and plotted by sampling points and binning them to get an approximately normal distribution. This chart helps us visualize the mean salaries and observe the deviations from the average salary offered to college graduates.
 
-(edu_main.gif)
+![Education and Demographic Analysis Charts](edu_main.gif)
 
 Our next graph uses a population pyramid chart to observe variations in college major preferences by gender for a selected year. This helps us find gender-based patterns and shifts in college major preferences throughout the years.
 
-(gender_pyramid.png)
+![Gender Pyramid Bar chart](gender_pyramid.png)
 
 Since the dataset is primarily time series based, our visualizations would be incomplete without a line graph showcasing trends in college major preferences throughout the years. The multi-line graph is interactive with hover and select to focus functionality. The user can selectively analyze a subset of college majors and choose the year range to localize their analysis. This multi-line graph is linked to bar graphs that display bar charts for analyzing employment data. We primarily look at Employer Type, Employment Work field, and Employment status. The multi-line and succeeding bar charts are linked with the click to focus approach to display year-wise trends for the college major selected. The bar charts also have the feature to share a common axis scale across similar charts to make them easily comparable. In all our charts, we used tooltips to aid readability.
 
-(emp_main.gif)
+![Multichart and Employment Analysis Charts](emp_main.gif)
 
 ## Development Process
 
